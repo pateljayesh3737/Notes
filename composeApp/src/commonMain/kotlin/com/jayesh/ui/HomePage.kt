@@ -7,11 +7,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.jayesh.data.NoteModel
+import com.jayesh.data.Note
 
 @Composable
 @ExperimentalMaterial3Api
-fun HomePage(notes: List<NoteModel> = emptyList()) {
+fun HomePage(notes: List<Note> = emptyList()) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -35,7 +35,7 @@ fun HomePage(notes: List<NoteModel> = emptyList()) {
 }
 
 @Composable
-fun NoteItem(note: NoteModel) {
+fun NoteItem(note: Note) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

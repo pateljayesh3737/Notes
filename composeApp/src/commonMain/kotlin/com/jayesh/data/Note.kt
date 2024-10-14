@@ -2,7 +2,7 @@ package com.jayesh.data
 
 import kotlinx.datetime.*
 
-data class NoteModel(
+data class Note(
     val id: String,            // Unique identifier for the note
     val title: String,         // Title of the note
     val content: String,       // Content/body of the note
@@ -14,14 +14,14 @@ data class NoteModel(
 val now: Instant = Clock.System.now()
 val today: LocalDateTime = now.toLocalDateTime(TimeZone.currentSystemDefault())
 val sampleNotes = listOf(
-    NoteModel(
+    Note(
         id = "1",
         title = "Sample Note 1",
         content = "This is the content of sample note 1.",
         createdAt = today,
         updatedAt = today
     ),
-    NoteModel(
+    Note(
         id = "2",
         title = "Sample Note 2",
         content = "This is the content of sample note 2.",
