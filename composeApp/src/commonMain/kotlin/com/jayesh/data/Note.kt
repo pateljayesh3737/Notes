@@ -1,8 +1,10 @@
 package com.jayesh.data
 
+import androidx.room.Entity
 import com.jayesh.getCurrnetLocalDateTime
 import kotlinx.datetime.*
 
+@Entity(tableName = "notes")
 data class Note(
     val id: String,            // Unique identifier for the note
     val title: String,         // Title of the note
