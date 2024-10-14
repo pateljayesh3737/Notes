@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.room.RoomDatabase
 import com.jayesh.db.NoteDatabase
 import com.jayesh.db.getRoomDatabase
+import com.jayesh.ui.state.NoteUiState
 import com.jayesh.viewmodel.NoteViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -20,11 +21,11 @@ fun MainScreen(noteDatabaseBuilder: RoomDatabase.Builder<NoteDatabase>) {
     val navController = rememberNavController()
 
     val noteViewModel: NoteViewModel = viewModel { NoteViewModel(noteDao) }
-    val notes by noteViewModel.notes.collectAsState()
+    val noteUiState by noteViewModel.noteUiState.collectAsState()
 
     NavHost(navController, startDestination = "home") {
         composable("home") {
-            HomePage(notes = notes, navController)
+            HomePage(noteUiState = noteUiState, navController)
         }
         composable("add") {
             NoteEditor(
@@ -39,7 +40,10 @@ fun MainScreen(noteDatabaseBuilder: RoomDatabase.Builder<NoteDatabase>) {
         }
         composable("edit/{noteId}") { backStackEntry ->
             val noteId = backStackEntry.arguments?.getString("noteId")
-            val note = notes.find { it.id == noteId }
+            val note = when (val ob = noteUiState) {
+                is NoteUiState.Success -> ob.notes.find { it.id == noteId }
+                else -> null
+            }
             NoteEditor(
                 note = note,
                 onSave = { updatedNote ->

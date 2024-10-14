@@ -3,10 +3,10 @@ package com.jayesh.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jayesh.data.Note
-import com.jayesh.data.sampleNotes
 import com.jayesh.db.NoteDao
 import com.jayesh.generateRandomUuid
 import com.jayesh.getCurrnetLocalDateTime
+import com.jayesh.ui.state.NoteUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -14,8 +14,8 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.format
 
 class NoteViewModel(private val noteDao: NoteDao) : ViewModel() {
-    private val _notes = MutableStateFlow<List<Note>>(emptyList())
-    val notes: StateFlow<List<Note>> = _notes
+    private val _noteUiState = MutableStateFlow<NoteUiState>(NoteUiState.Loading)
+    val noteUiState: StateFlow<NoteUiState> = _noteUiState
 
     init {
         fetchNotes()
@@ -23,7 +23,16 @@ class NoteViewModel(private val noteDao: NoteDao) : ViewModel() {
 
     private fun fetchNotes() {
         viewModelScope.launch {
-            _notes.value = noteDao.getAllNotes()
+            try {
+                val notes = noteDao.getAllNotes()
+                _noteUiState.value = if (notes.isEmpty()) {
+                    NoteUiState.Empty
+                } else {
+                    NoteUiState.Success(notes)
+                }
+            } catch (e: Exception) {
+                _noteUiState.value = NoteUiState.Error(e.message ?: "An error occurred while fetching notes")
+            }
         }
     }
 
@@ -34,28 +43,36 @@ class NoteViewModel(private val noteDao: NoteDao) : ViewModel() {
                 title = title,
                 content = content,
                 createdAt = getCurrnetLocalDateTime().format(LocalDateTime.Formats.ISO),
-                updatedAt =  getCurrnetLocalDateTime().format(LocalDateTime.Formats.ISO),
+                updatedAt = getCurrnetLocalDateTime().format(LocalDateTime.Formats.ISO),
             )
-            noteDao.insert(newNote)
-            fetchNotes()
+            try {
+                noteDao.insert(newNote)
+                fetchNotes()
+            } catch (e: Exception) {
+                _noteUiState.value = NoteUiState.Error(e.message ?: "An error occurred while adding the note")
+            }
         }
     }
 
     fun updateNote(updatedNote: Note) {
         viewModelScope.launch {
-           try {
+            try {
                 noteDao.update(updatedNote)
                 fetchNotes()
-           } catch (e: Exception) {
-               println(e.message ?: "An error occurred while updating the note")
-           }
+            } catch (e: Exception) {
+                _noteUiState.value = NoteUiState.Error(e.message ?: "An error occurred while updating the note")
+            }
         }
     }
 
     fun deleteNote(note: Note) {
         viewModelScope.launch {
-            noteDao.delete(note)
-            fetchNotes()
+            try {
+                noteDao.delete(note)
+                fetchNotes()
+            } catch (e: Exception) {
+                _noteUiState.value = NoteUiState.Error(e.message ?: "An error occurred while deleting the note")
+            }
         }
     }
 }

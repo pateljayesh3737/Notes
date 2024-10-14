@@ -13,7 +13,7 @@ import kotlinx.datetime.format
 
 @Composable
 fun NoteEditor(
-    note: Note? = null, // Pass null for adding a new note
+    note: Note? = null,
     onSave: (Note) -> Unit,
     onCancel: () -> Unit
 ) {
