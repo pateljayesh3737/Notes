@@ -11,6 +11,7 @@ import com.jayesh.getCurrnetLocalDateTime
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.format
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteEditor(
     note: Note? = null,
@@ -20,47 +21,58 @@ fun NoteEditor(
     var title by remember { mutableStateOf(note?.title ?: "") }
     var content by remember { mutableStateOf(note?.content ?: "") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        TextField(
-            value = title,
-            onValueChange = { title = it },
-            label = { Text("Title") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        TextField(
-            value = content,
-            onValueChange = { content = it },
-            label = { Text("Content") },
-            modifier = Modifier.fillMaxWidth(),
-            maxLines = 10
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = {
-                val newNote = note?.copy(title = title, content = content) ?: Note(
-                    id = generateRandomUuid(),
-                    title = title,
-                    content = content,
-                    createdAt = getCurrnetLocalDateTime().format(LocalDateTime.Formats.ISO),
-                    updatedAt = getCurrnetLocalDateTime().format(LocalDateTime.Formats.ISO),
-                )
-                onSave(newNote)
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Save")
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Notes") },
+            )
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(
-            onClick = onCancel,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Cancel")
+    ) { paddingValues ->
+
+        Column(modifier = Modifier.padding(paddingValues)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+                TextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Title") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                TextField(
+                    value = content,
+                    onValueChange = { content = it },
+                    label = { Text("Content") },
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 10
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = {
+                        val newNote = note?.copy(title = title, content = content) ?: Note(
+                            id = generateRandomUuid(),
+                            title = title,
+                            content = content,
+                            createdAt = getCurrnetLocalDateTime().format(LocalDateTime.Formats.ISO),
+                            updatedAt = getCurrnetLocalDateTime().format(LocalDateTime.Formats.ISO),
+                        )
+                        onSave(newNote)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Save")
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = onCancel,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Cancel")
+                }
+            }
         }
     }
 }
