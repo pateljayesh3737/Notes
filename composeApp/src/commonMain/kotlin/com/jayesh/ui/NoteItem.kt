@@ -21,7 +21,8 @@ fun NoteItem(
             .fillMaxWidth()
             .padding(8.dp),
         elevation = CardDefaults.elevatedCardElevation(),
-        colors = CardDefaults.cardColors(containerColor = Color(note.backgroundColor))
+        colors = CardDefaults.cardColors(containerColor = Color(note.backgroundColor)),
+        onClick = { onNoteItemClicked() }
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
