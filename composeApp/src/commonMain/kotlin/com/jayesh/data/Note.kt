@@ -1,11 +1,13 @@
 package com.jayesh.data
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.jayesh.getCurrnetLocalDateTime
 import kotlinx.datetime.*
 
 @Entity(tableName = "notes")
 data class Note(
+    @PrimaryKey
     val id: String,            // Unique identifier for the note
     val title: String,         // Title of the note
     val content: String,       // Content/body of the note
