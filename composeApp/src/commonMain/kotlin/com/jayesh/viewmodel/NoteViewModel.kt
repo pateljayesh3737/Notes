@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jayesh.data.Note
 import com.jayesh.data.sampleNotes
+import com.jayesh.db.NoteDao
 import com.jayesh.generateRandomUuid
 import com.jayesh.getCurrnetLocalDateTime
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,10 +13,19 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.format
 
-class NoteViewModel: ViewModel() {
-
-    private val _notes = MutableStateFlow<List<Note>>(sampleNotes)
+class NoteViewModel(private val noteDao: NoteDao) : ViewModel() {
+    private val _notes = MutableStateFlow<List<Note>>(emptyList())
     val notes: StateFlow<List<Note>> = _notes
+
+    init {
+        fetchNotes()
+    }
+
+    private fun fetchNotes() {
+        viewModelScope.launch {
+            _notes.value = noteDao.getAllNotes()
+        }
+    }
 
     fun addNote(title: String, content: String) {
         viewModelScope.launch {
@@ -26,25 +36,26 @@ class NoteViewModel: ViewModel() {
                 createdAt = getCurrnetLocalDateTime().format(LocalDateTime.Formats.ISO),
                 updatedAt =  getCurrnetLocalDateTime().format(LocalDateTime.Formats.ISO),
             )
-            _notes.value += newNote
+            noteDao.insert(newNote)
+            fetchNotes()
         }
     }
 
     fun updateNote(updatedNote: Note) {
         viewModelScope.launch {
-            _notes.value = _notes.value.map { note ->
-                if (note.id == updatedNote.id) updatedNote else note
-            }
+           try {
+                noteDao.update(updatedNote)
+                fetchNotes()
+           } catch (e: Exception) {
+               println(e.message ?: "An error occurred while updating the note")
+           }
         }
     }
 
-    fun deleteNote(noteId: String) {
+    fun deleteNote(note: Note) {
         viewModelScope.launch {
-            _notes.value = _notes.value.filterNot { it.id == noteId }
+            noteDao.delete(note)
+            fetchNotes()
         }
-    }
-
-    fun fetchNotes(): List<Note> {
-        return sampleNotes
     }
 }
