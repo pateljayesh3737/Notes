@@ -23,16 +23,29 @@ fun MainScreen(noteDatabaseBuilder: RoomDatabase.Builder<NoteDatabase>) {
     val notes by noteViewModel.notes.collectAsState()
 
     NavHost(navController, startDestination = "home") {
-        composable("home") { HomePage(notes = notes, navController) }
+        composable("home") {
+            HomePage(notes = notes, navController)
+        }
+        composable("add") {
+            NoteEditor(
+                onSave = { newNote ->
+                    noteViewModel.addNote(newNote.title, newNote.content)
+                    navController.navigate("home")
+                },
+                onCancel = {
+                    navController.navigate("home")
+                }
+            )
+        }
         composable("edit/{noteId}") { backStackEntry ->
             val noteId = backStackEntry.arguments?.getString("noteId")
             val note = notes.find { it.id == noteId }
             NoteEditor(
                 note = note,
                 onSave = { updatedNote ->
-                    if (note == null)
-                        noteViewModel.addNote(updatedNote.title, updatedNote.content)
-                    else noteViewModel.updateNote(updatedNote)
+                    if (note != null) {
+                        noteViewModel.updateNote(updatedNote)
+                    }
                     navController.navigate("home")
                 },
                 onCancel = {

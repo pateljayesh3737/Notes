@@ -19,15 +19,12 @@ fun HomePage(notes: List<Note> = emptyList(), navController: NavHostController) 
         topBar = {
             TopAppBar(
                 title = { Text("Notes") },
-                actions = {
-                    // Add action buttons here if needed
-                }
             )
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate("edit/new")
+                    navController.navigate("add")
                 }
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add Note")
