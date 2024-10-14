@@ -53,6 +53,7 @@ kotlin {
             implementation(libs.androidx.room.runtime)
 //            ksp(libs.androidx.room.compile) // doesn't work
 //            implementation(libs.androidx.room.compile) // doesn't work
+            implementation(libs.androidx.sqlite.bundled)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

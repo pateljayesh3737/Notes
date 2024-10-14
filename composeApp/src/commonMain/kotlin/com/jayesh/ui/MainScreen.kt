@@ -7,6 +7,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.jayesh.db.NoteDatabase
+import com.jayesh.db.getRoomDatabase
 import com.jayesh.viewmodel.NoteViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
