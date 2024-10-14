@@ -35,6 +35,11 @@ fun MainScreen(noteDatabaseBuilder: RoomDatabase.Builder<NoteDatabase>) {
                 },
                 onCancel = {
                     navController.navigate("home")
+                },
+                onNoteDelete = {
+                    if (this !=null) {
+                        noteViewModel.deleteNote(note = this)
+                    }
                 }
             )
         }
@@ -54,6 +59,11 @@ fun MainScreen(noteDatabaseBuilder: RoomDatabase.Builder<NoteDatabase>) {
                 },
                 onCancel = {
                     navController.navigate("home")
+                },
+                onNoteDelete = {
+                    if (this !=null) {
+                        noteViewModel.deleteNote(note = this)
+                    }
                 }
             )
         }
