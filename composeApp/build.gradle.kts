@@ -95,6 +95,7 @@ room {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+    ksp(libs.androidx.room.compile)
 }
 
 compose.desktop {
