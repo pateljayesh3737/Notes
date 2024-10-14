@@ -9,6 +9,8 @@ import com.jayesh.getCurrnetLocalDateTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.format
 
 class NoteViewModel: ViewModel() {
 
@@ -21,8 +23,8 @@ class NoteViewModel: ViewModel() {
                 id = generateRandomUuid(),
                 title = title,
                 content = content,
-                createdAt = getCurrnetLocalDateTime(),
-                updatedAt =  getCurrnetLocalDateTime(),
+                createdAt = getCurrnetLocalDateTime().format(LocalDateTime.Formats.ISO),
+                updatedAt =  getCurrnetLocalDateTime().format(LocalDateTime.Formats.ISO),
             )
             _notes.value += newNote
         }

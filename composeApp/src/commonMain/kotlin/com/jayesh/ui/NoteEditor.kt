@@ -8,6 +8,8 @@ import androidx.compose.ui.unit.dp
 import com.jayesh.data.Note
 import com.jayesh.generateRandomUuid
 import com.jayesh.getCurrnetLocalDateTime
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.format
 
 @Composable
 fun NoteEditor(
@@ -44,8 +46,8 @@ fun NoteEditor(
                     id = generateRandomUuid(),
                     title = title,
                     content = content,
-                    createdAt = getCurrnetLocalDateTime(),
-                    updatedAt = getCurrnetLocalDateTime(),
+                    createdAt = getCurrnetLocalDateTime().format(LocalDateTime.Formats.ISO),
+                    updatedAt = getCurrnetLocalDateTime().format(LocalDateTime.Formats.ISO),
                 )
                 onSave(newNote)
             },
