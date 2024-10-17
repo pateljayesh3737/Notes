@@ -9,7 +9,7 @@ import com.jayesh.data.Note
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
-@Database(entities = [Note::class], version = 1)
+@Database(entities = [Note::class], version = 2)
 @ConstructedBy(NoteDatabaseConstructor::class)
 abstract class NoteDatabase : RoomDatabase() {
   abstract fun getDao(): NoteDao
@@ -25,7 +25,7 @@ fun getRoomDatabase(
     builder: RoomDatabase.Builder<NoteDatabase>
 ): NoteDatabase {
   return builder
-      .fallbackToDestructiveMigrationOnDowngrade(false)
+      .fallbackToDestructiveMigration(true)
       .setDriver(BundledSQLiteDriver())
       .setQueryCoroutineContext(Dispatchers.IO)
       .build()

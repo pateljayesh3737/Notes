@@ -2,6 +2,7 @@ package com.jayesh.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,9 +19,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.jayesh.ui.theme.getColorScheme
+import com.jayesh.ui.theme.option.AppThemeOption
 
 @Composable
-fun ColorPickerDialog(colors: List<Long>, onDismissRequest: () -> Unit, onColorPick: (Long) -> Unit) {
+fun ColorPickerDialog(
+    appThemeOptions: List<AppThemeOption>,
+    onDismissRequest: () -> Unit,
+    onThemeOptionSelected: (AppThemeOption) -> Unit
+) {
     Dialog(onDismissRequest = { onDismissRequest() }) {
         Surface(
             shape = RoundedCornerShape(16.dp),
@@ -39,14 +46,16 @@ fun ColorPickerDialog(colors: List<Long>, onDismissRequest: () -> Unit, onColorP
                 )
 
                 LazyColumn {
-                    items(colors) { color ->
+                    items(appThemeOptions) { appThemeOption ->
                         ElevatedCard(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 8.dp)
-                                .clickable { onColorPick(color) },
+                                .clickable { onThemeOptionSelected(appThemeOption) },
                             shape = RoundedCornerShape(12.dp),
-                            colors = CardDefaults.elevatedCardColors(containerColor = Color(color)),
+                            colors = CardDefaults.elevatedCardColors(
+                                containerColor = appThemeOption.getColorScheme(isSystemInDarkTheme()).primaryContainer
+                            ),
                         ) {
                             Box(
                                 modifier = Modifier

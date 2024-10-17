@@ -8,12 +8,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.room.RoomDatabase
 import com.jayesh.db.NoteDatabase
+import com.jayesh.ui.theme.AppTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
 fun App(noteDatabaseBuilder: RoomDatabase.Builder<NoteDatabase>) {
-    MaterialTheme {
+    AppTheme {
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             MainScreen(noteDatabaseBuilder = noteDatabaseBuilder)
         }
