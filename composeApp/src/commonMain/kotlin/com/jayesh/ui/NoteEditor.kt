@@ -6,15 +6,16 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.jayesh.data.Note
 import com.jayesh.generateRandomUuid
 import com.jayesh.getCurrnetLocalDateTime
+import com.jayesh.ui.theme.AppTheme
+import com.jayesh.ui.theme.option.AppThemeOption
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.format
 import notes.composeapp.generated.resources.Res
-import notes.composeapp.generated.resources.compose_multiplatform
+import notes.composeapp.generated.resources.color_palete
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,36 +29,34 @@ fun NoteEditor(
     var title by remember { mutableStateOf(note?.title ?: "") }
     var content by remember { mutableStateOf(note?.content ?: "") }
     val openAlertDialog = remember { mutableStateOf(false) }
-    val colors by remember {
+    val appThemeOptions by remember {
         mutableStateOf(
             listOf(
-                0xff374a67,
-                0xff068AB2,
-                0xfff2392c,
-                0xff89BD9E,
-                0xff6564DB,
-                0xffCB9CF2,
-                0xff616283,
+                AppThemeOption.Default,
+                AppThemeOption.Red,
+                AppThemeOption.Green,
+                AppThemeOption.Blue,
+                AppThemeOption.Yellow,
             )
         )
     }
-    var selectedColor by remember { mutableStateOf(note?.backgroundColor ?: colors.first()) }
+    var selectedAppThemeOption by remember { mutableStateOf(note?.appThemeOption ?: AppThemeOption.Default) }
 
     when {
         openAlertDialog.value -> {
             ColorPickerDialog(
-                colors = colors, onDismissRequest = {
+                appThemeOptions = appThemeOptions, onDismissRequest = {
                     openAlertDialog.value = openAlertDialog.value.not()
                 },
-                onColorPick = { pickedColor ->
-                    selectedColor = pickedColor
+                onThemeOptionSelected = { pickedColor ->
+                    selectedAppThemeOption = pickedColor
                     openAlertDialog.value = openAlertDialog.value.not()
                 }
             )
         }
 
         else -> {
-            MaterialTheme(colorScheme = lightColorScheme(primary = Color(selectedColor))) {
+            AppTheme(themeOption = selectedAppThemeOption) {
                 Scaffold(
                     topBar = {
                         TopAppBar(
@@ -67,7 +66,7 @@ fun NoteEditor(
                                     openAlertDialog.value = true
                                 }) {
                                     Icon(
-                                        painter = painterResource(Res.drawable.compose_multiplatform),
+                                        painter = painterResource(Res.drawable.color_palete),
                                         contentDescription = null
                                     )
                                 }
@@ -111,15 +110,15 @@ fun NoteEditor(
                                         note?.copy(
                                             title = title,
                                             content = content,
-                                            backgroundColor = selectedColor
+                                            appThemeOption = selectedAppThemeOption
                                         ) ?: Note(
-                                                id = generateRandomUuid(),
-                                                title = title,
-                                                content = content,
-                                                createdAt = getCurrnetLocalDateTime().format(LocalDateTime.Formats.ISO),
-                                                updatedAt = getCurrnetLocalDateTime().format(LocalDateTime.Formats.ISO),
-                                                backgroundColor = selectedColor
-                                            )
+                                            id = generateRandomUuid(),
+                                            title = title,
+                                            content = content,
+                                            createdAt = getCurrnetLocalDateTime().format(LocalDateTime.Formats.ISO),
+                                            updatedAt = getCurrnetLocalDateTime().format(LocalDateTime.Formats.ISO),
+                                            appThemeOption = selectedAppThemeOption
+                                        )
                                     onSave(newNote)
                                 },
                                 modifier = Modifier.fillMaxWidth()

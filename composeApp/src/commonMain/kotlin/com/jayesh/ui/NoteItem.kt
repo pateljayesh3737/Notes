@@ -1,27 +1,27 @@
 package com.jayesh.ui
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.jayesh.data.Note
+import com.jayesh.ui.theme.getColorScheme
 
 @Composable
 fun NoteItem(
     note: Note,
     onNoteItemClicked: () -> Unit = {}
 ) {
-    Card(
+    ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
-        elevation = CardDefaults.elevatedCardElevation(),
-        colors = CardDefaults.cardColors(containerColor = Color(note.backgroundColor)),
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = note.appThemeOption.getColorScheme(isSystemInDarkTheme()).primaryContainer
+        ),
         onClick = { onNoteItemClicked() }
     ) {
         Column(
