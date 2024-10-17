@@ -15,10 +15,9 @@ import com.jayesh.ui.theme.scheme.ColorYellow
 fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     themeOption: AppThemeOption = AppThemeOption.Default,
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     val colorScheme = themeOption.getColorScheme(darkTheme)
-
     MaterialTheme(
         colorScheme = colorScheme,
         typography = AppTypography,
@@ -29,7 +28,7 @@ fun AppTheme(
 fun AppThemeOption.getColorScheme(darkTheme: Boolean): ColorScheme {
     return when (this) {
         AppThemeOption.Default -> if (darkTheme) ColorDefault.darkScheme else ColorDefault.lightScheme
-        AppThemeOption.Red -> if (darkTheme) ColorRed.darkScheme else ColorRed.darkScheme
+        AppThemeOption.Red -> if (darkTheme) ColorRed.darkScheme else ColorRed.lightScheme
         AppThemeOption.Blue -> if (darkTheme) ColorBlue.darkScheme else ColorBlue.lightScheme
         AppThemeOption.Green -> if (darkTheme) ColorGreen.darkScheme else ColorGreen.lightScheme
         AppThemeOption.Yellow -> if (darkTheme) ColorYellow.darkScheme else ColorYellow.lightScheme

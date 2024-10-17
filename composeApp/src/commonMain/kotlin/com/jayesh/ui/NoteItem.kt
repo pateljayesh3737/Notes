@@ -15,7 +15,7 @@ fun NoteItem(
     note: Note,
     onNoteItemClicked: () -> Unit = {}
 ) {
-    AppTheme(themeOption = note.appThemeOption) {
+    AppTheme(themeOption = note.appThemeOption, darkTheme = false) {
         ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()

@@ -14,7 +14,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun App(noteDatabaseBuilder: RoomDatabase.Builder<NoteDatabase>) {
-    AppTheme {
+    AppTheme(darkTheme = false) {
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             MainScreen(noteDatabaseBuilder = noteDatabaseBuilder)
         }

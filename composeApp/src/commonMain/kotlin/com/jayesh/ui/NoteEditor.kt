@@ -56,7 +56,7 @@ fun NoteEditor(
         }
 
         else -> {
-            AppTheme(themeOption = selectedAppThemeOption) {
+            AppTheme(themeOption = selectedAppThemeOption, darkTheme = false) {
                 Scaffold(
                     topBar = {
                         TopAppBar(
