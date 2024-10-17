@@ -51,9 +51,8 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.navigation.compose)
             implementation(libs.androidx.room.runtime)
-//            ksp(libs.androidx.room.compile) // doesn't work
-//            implementation(libs.androidx.room.compile) // doesn't work
             implementation(libs.androidx.sqlite.bundled)
+            implementation(libs.kotlinx.coroutines.core)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

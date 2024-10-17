@@ -17,10 +17,9 @@ import com.jayesh.viewmodel.NoteViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(noteDatabaseBuilder: RoomDatabase.Builder<NoteDatabase>) {
-    val noteDao = getRoomDatabase(builder = noteDatabaseBuilder).getDao()
     val navController = rememberNavController()
 
-    val noteViewModel: NoteViewModel = viewModel { NoteViewModel(noteDao) }
+    val noteViewModel: NoteViewModel = viewModel { NoteViewModel(noteDatabaseBuilder) }
     val noteUiState by noteViewModel.noteUiState.collectAsState()
 
     NavHost(navController, startDestination = "home") {
