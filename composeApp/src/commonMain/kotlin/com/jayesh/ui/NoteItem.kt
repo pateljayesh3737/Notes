@@ -25,6 +25,7 @@ fun NoteItem(
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
+                println("Note with ${note.title} has color: ${note.appThemeOption.name}")
                 Text(text = note.title, style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(text = note.content, style = MaterialTheme.typography.bodyMedium)
