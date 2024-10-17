@@ -29,7 +29,7 @@ fun MainScreen(noteDatabaseBuilder: RoomDatabase.Builder<NoteDatabase>) {
         composable("add") {
             NoteEditor(
                 onSave = { newNote ->
-                    noteViewModel.addNote(newNote.title, newNote.content)
+                    noteViewModel.addNote(newNote)
                     navController.navigate("home")
                 },
                 onCancel = {
