@@ -1,5 +1,7 @@
 package com.jayesh.viewmodel
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.room.RoomDatabase
@@ -11,6 +13,7 @@ import com.jayesh.db.NoteDatabase
 import com.jayesh.db.getRoomDatabase
 import com.jayesh.repository.NoteRepository
 import com.jayesh.repository.NoteRepositoryImpl
+import com.jayesh.ui.state.NoteEditorUiState
 import com.jayesh.ui.state.NoteUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,10 +26,14 @@ class NoteViewModel(
 ) : ViewModel() {
     private val _noteUiState = MutableStateFlow<NoteUiState>(NoteUiState.Loading)
     val noteUiState: StateFlow<NoteUiState> = _noteUiState
+    private val _noteEditorUiState = MutableStateFlow<NoteEditorUiState>(NoteEditorUiState.Success)
+    val noteEditorUiState: StateFlow<NoteEditorUiState> = _noteEditorUiState
 
     private var noteDao: NoteDao = getRoomDatabase(noteDatabaseBuilder).getDao()
     private val apiDataSource: ApiDataSource = ApiDataSourceImpl(noteDao = noteDao)
     private val noteRepository: NoteRepository = NoteRepositoryImpl(apiDataSource = apiDataSource)
+    val noteTitle: MutableState<String> = mutableStateOf("")
+    val noteContent: MutableState<String> = mutableStateOf("")
 
     init {
         fetchNotes()
@@ -52,10 +59,28 @@ class NoteViewModel(
     fun addNote(newNote: Note) {
         viewModelScope.launch {
             try {
-                noteRepository.addNote(newNote)
-                    .collectLatest {
-                        if (it) fetchNotes()
-                    }
+                val title = newNote.title.trim()
+                val content = newNote.content.trim()
+
+                var titleError: String? = null
+                var contentError: String? = null
+
+                if (title.isEmpty()) titleError = "Title cannot be empty."
+
+                if (content.isEmpty()) contentError = "Content cannot be empty."
+
+                if (titleError != null || contentError != null) {
+                    _noteEditorUiState.value = NoteEditorUiState.Error(
+                        titleMessage = titleError,
+                        contentMessage = contentError
+                    )
+                } else {
+                    noteRepository.addNote(newNote)
+                        .collectLatest {
+                            if (it) fetchNotes()
+                        }
+                }
+                clearNoteEditor()
             } catch (e: Exception) {
                 _noteUiState.value = NoteUiState.Error(e.message ?: "An error occurred while adding the note")
             }
@@ -65,10 +90,28 @@ class NoteViewModel(
     fun updateNote(updatedNote: Note) {
         viewModelScope.launch {
             try {
-                noteRepository.updateNote(updatedNote)
-                    .collectLatest {
-                        if (it) fetchNotes()
-                    }
+                val title = updatedNote.title.trim()
+                val content = updatedNote.content.trim()
+
+                var titleError: String? = null
+                var contentError: String? = null
+
+                if (title.isEmpty()) titleError = "Title cannot be empty."
+
+                if (content.isEmpty()) contentError = "Content cannot be empty."
+
+                if (titleError != null || contentError != null) {
+                    _noteEditorUiState.value = NoteEditorUiState.Error(
+                        titleMessage = titleError,
+                        contentMessage = contentError
+                    )
+                } else {
+                    noteRepository.updateNote(updatedNote)
+                        .collectLatest {
+                            if (it) fetchNotes()
+                        }
+                }
+                clearNoteEditor()
             } catch (e: Exception) {
                 _noteUiState.value = NoteUiState.Error(e.message ?: "An error occurred while updating the note")
             }
@@ -86,5 +129,10 @@ class NoteViewModel(
                 _noteUiState.value = NoteUiState.Error(e.message ?: "An error occurred while deleting the note")
             }
         }
+    }
+
+    fun clearNoteEditor() {
+        noteTitle.value = ""
+        noteContent.value = ""
     }
 }
