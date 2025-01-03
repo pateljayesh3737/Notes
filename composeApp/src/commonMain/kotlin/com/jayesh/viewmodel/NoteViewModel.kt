@@ -42,14 +42,9 @@ class NoteViewModel(
     private fun fetchNotes() {
         viewModelScope.launch(Dispatchers.Main) {
             try {
-                noteRepository.getAllNotes()
-                    .collectLatest { notes ->
-                        _noteUiState.value = if (notes.isEmpty()) {
-                            NoteUiState.Empty
-                        } else {
-                            NoteUiState.Success(notes)
-                        }
-                    }
+                noteRepository.getAllNotes().collectLatest { notes ->
+                    _noteUiState.value = if (notes.isEmpty()) NoteUiState.Empty else NoteUiState.Success(notes)
+                }
             } catch (e: Exception) {
                 _noteUiState.value = NoteUiState.Error(e.message ?: "An error occurred while fetching notes")
             }
@@ -57,65 +52,52 @@ class NoteViewModel(
     }
 
     fun addNote(newNote: Note) {
-        viewModelScope.launch {
-            try {
-                val title = newNote.title.trim()
-                val content = newNote.content.trim()
-
-                var titleError: String? = null
-                var contentError: String? = null
-
-                if (title.isEmpty()) titleError = "Title cannot be empty."
-
-                if (content.isEmpty()) contentError = "Content cannot be empty."
-
-                if (titleError != null || contentError != null) {
-                    _noteEditorUiState.value = NoteEditorUiState.Error(
-                        titleMessage = titleError,
-                        contentMessage = contentError
-                    )
-                } else {
-                    noteRepository.addNote(newNote)
-                        .collectLatest {
-                            if (it) fetchNotes()
-                        }
+        try {
+            handleNote(newNote, onSuccessValidation = {
+                viewModelScope.launch {
+                    noteRepository.addNote(newNote).collectLatest {
+                        if (it) fetchNotes()
+                    }
                 }
-                clearNoteEditor()
-            } catch (e: Exception) {
-                _noteUiState.value = NoteUiState.Error(e.message ?: "An error occurred while adding the note")
-            }
+            })
+        } catch (e: Exception) {
+            _noteUiState.value = NoteUiState.Error(e.message ?: "An error occurred while adding the note")
         }
     }
 
     fun updateNote(updatedNote: Note) {
-        viewModelScope.launch {
-            try {
-                val title = updatedNote.title.trim()
-                val content = updatedNote.content.trim()
-
-                var titleError: String? = null
-                var contentError: String? = null
-
-                if (title.isEmpty()) titleError = "Title cannot be empty."
-
-                if (content.isEmpty()) contentError = "Content cannot be empty."
-
-                if (titleError != null || contentError != null) {
-                    _noteEditorUiState.value = NoteEditorUiState.Error(
-                        titleMessage = titleError,
-                        contentMessage = contentError
-                    )
-                } else {
+        try {
+            handleNote(updatedNote, onSuccessValidation = {
+                viewModelScope.launch {
                     noteRepository.updateNote(updatedNote)
                         .collectLatest {
                             if (it) fetchNotes()
                         }
                 }
-                clearNoteEditor()
-            } catch (e: Exception) {
-                _noteUiState.value = NoteUiState.Error(e.message ?: "An error occurred while updating the note")
-            }
+            })
+        } catch (e: Exception) {
+            _noteUiState.value = NoteUiState.Error(e.message ?: "An error occurred while updating the note")
         }
+    }
+
+    private fun handleNote(note: Note, onSuccessValidation: () -> Unit) {
+        val title = note.title.trim()
+        val content = note.content.trim()
+
+        var titleError: String? = null
+        var contentError: String? = null
+
+        if (title.isEmpty()) titleError = "Title cannot be empty."
+
+        if (content.isEmpty()) contentError = "Content cannot be empty."
+
+        if (titleError != null || contentError != null)
+            _noteEditorUiState.value = NoteEditorUiState.Error(
+                titleMessage = titleError,
+                contentMessage = contentError
+            )
+        else onSuccessValidation()
+        clearNoteEditorState()
     }
 
     fun deleteNote(note: Note) {
@@ -131,8 +113,9 @@ class NoteViewModel(
         }
     }
 
-    fun clearNoteEditor() {
+    private fun clearNoteEditorState() {
         noteTitle.value = ""
         noteContent.value = ""
+        _noteEditorUiState.value = NoteEditorUiState.Success
     }
 }
