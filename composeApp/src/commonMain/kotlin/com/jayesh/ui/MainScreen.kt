@@ -21,6 +21,7 @@ fun MainScreen(noteDatabaseBuilder: RoomDatabase.Builder<NoteDatabase>) {
 
     val noteViewModel: NoteViewModel = viewModel { NoteViewModel(noteDatabaseBuilder) }
     val noteUiState by noteViewModel.noteUiState.collectAsState()
+    val noteEditorUiState by noteViewModel.noteEditorUiState.collectAsState()
 
     NavHost(navController, startDestination = "home") {
         composable("home") {
@@ -28,9 +29,11 @@ fun MainScreen(noteDatabaseBuilder: RoomDatabase.Builder<NoteDatabase>) {
         }
         composable("add") {
             NoteEditor(
+                noteEditorUiState = noteEditorUiState,
+                noteTitleState = noteViewModel.noteTitle,
+                noteContentState = noteViewModel.noteContent,
                 onSave = { newNote ->
                     noteViewModel.addNote(newNote)
-                    navController.navigate("home")
                 },
                 onCancel = {
                     navController.navigate("home")
@@ -49,6 +52,9 @@ fun MainScreen(noteDatabaseBuilder: RoomDatabase.Builder<NoteDatabase>) {
                 else -> null
             }
             NoteEditor(
+                noteEditorUiState= noteEditorUiState,
+                noteTitleState = noteViewModel.noteTitle,
+                noteContentState = noteViewModel.noteContent,
                 note = note,
                 onSave = { updatedNote ->
                     if (note != null) {
