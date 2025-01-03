@@ -95,6 +95,7 @@ fun NoteEditor(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         NoteTextField(
+                            modifier = Modifier.height(250.dp),
                             value = content,
                             onValueChange = { content = it },
                             label = "Content",
